@@ -150,7 +150,8 @@ if(!class_exists('BC_CF7_Signup')){
             ];
             $user_id = wp_insert_user($userdata);
             if(is_wp_error($user_id)){
-                $submission->set_response($user_id->get_error_message());
+                $message = $user_id->get_error_message();
+                $submission->set_response(wp_strip_all_tags($message));
                 $submission->set_status('aborted');
                 return;
             }
@@ -187,7 +188,8 @@ if(!class_exists('BC_CF7_Signup')){
                         'user_password' => $user_password,
                     ]);
                     if(is_wp_error($user)){
-                        $submission->set_response($user->get_error_message());
+                        $message = $user->get_error_message();
+                        $submission->set_response(wp_strip_all_tags($message));
                         $submission->set_status('aborted');
                     }
                 }

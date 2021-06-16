@@ -122,7 +122,7 @@ if(!class_exists('BC_CF7_Login')){
             if(is_user_logged_in()){
                 $error = __('You are logged in already. No need to register again!');
                 $error = $this->first_p($error);
-                return '<div class="alert alert-warning" role="alert">' . $error . '</div>';
+                return '<div class="alert alert-success" role="alert">' . $error . '</div>';
             }
             return $output;
         }
@@ -152,7 +152,8 @@ if(!class_exists('BC_CF7_Login')){
                 'user_password' => $user_password,
             ]);
             if(is_wp_error($user)){
-                $submission->set_response($user->get_error_message());
+                $message = $user->get_error_message();
+                $submission->set_response(wp_strip_all_tags($message));
                 $submission->set_status('aborted');
             }
         }
