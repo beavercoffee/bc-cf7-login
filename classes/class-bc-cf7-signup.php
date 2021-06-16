@@ -212,6 +212,7 @@ if(!class_exists('BC_CF7_Signup')){
             $user_email = $submission->get_posted_data('user_email');
             if(email_exists($user_email)){
                 $message = __('<strong>Error</strong>: This email is already registered. Please choose another one.');
+                $message = $this->first_p($message);
                 $result->invalidate($tag, wp_strip_all_tags($message));
                 return $result;
             }
@@ -268,6 +269,7 @@ if(!class_exists('BC_CF7_Signup')){
             }
             if(!validate_username($user_login)){
                 $message = __('<strong>Error</strong>: This username is invalid because it uses illegal characters. Please enter a valid username.');
+                $message = $this->first_p($message);
                 $result->invalidate($tag, wp_strip_all_tags($message));
                 return $result;
             }
@@ -279,12 +281,14 @@ if(!class_exists('BC_CF7_Signup')){
             }
             if(username_exists($user_login)){
                 $message = __('<strong>Error</strong>: This username is already registered. Please choose another one.');
+                $message = $this->first_p($message);
                 $result->invalidate($tag, wp_strip_all_tags($message));
                 return $result;
             }
             if(wpcf7_is_email($user_login)){
                 if(email_exists($user_login)){
                     $message = __('<strong>Error</strong>: This email is already registered. Please choose another one.');
+                    $message = $this->first_p($message);
                     $result->invalidate($tag, wp_strip_all_tags($message));
                     return $result;
                 }

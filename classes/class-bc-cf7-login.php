@@ -252,6 +252,7 @@ if(!class_exists('BC_CF7_Login')){
                 $user = get_user_by('email', $user_login);
             }
             if(!$user){
+                $message = $this->first_p($message);
                 $result->invalidate($tag, wp_strip_all_tags($message));
                 return $result;
             }
