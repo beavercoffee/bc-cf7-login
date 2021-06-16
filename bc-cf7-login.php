@@ -17,6 +17,7 @@ Version: 1.6.15
 
 if(defined('ABSPATH')){
     require_once(plugin_dir_path(__FILE__) . 'classes/class-bc-cf7-login.php');
+    require_once(plugin_dir_path(__FILE__) . 'classes/class-bc-cf7-signup.php');
     BC_CF7_Login::get_instance(__FILE__);
     BC_CF7_Signup::get_instance(__FILE__);
 }
