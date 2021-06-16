@@ -46,9 +46,9 @@ if(!class_exists('BC_CF7_Signup')){
             $this->file = $file;
             add_action('wpcf7_mail_sent', [$this, 'wpcf7_mail_sent']);
             add_filter('do_shortcode_tag', [$this, 'do_shortcode_tag'], 10, 4);
-            add_filter('wpcf7_validate_email*', [$this, 'wpcf7_validate_email'], 10, 2);
-            add_filter('wpcf7_validate_password*', [$this, 'wpcf7_validate_password'], 10, 2);
-            add_filter('wpcf7_validate_text*', [$this, 'wpcf7_validate_text'], 10, 2);
+            add_filter('wpcf7_validate_email*', [$this, 'wpcf7_validate_email'], 11, 2);
+            add_filter('wpcf7_validate_password*', [$this, 'wpcf7_validate_password'], 11, 2);
+            add_filter('wpcf7_validate_text*', [$this, 'wpcf7_validate_text'], 11, 2);
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
