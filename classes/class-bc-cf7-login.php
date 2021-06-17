@@ -215,7 +215,7 @@ if(!class_exists('BC_CF7_Login')){
                 $message = sprintf(__('<strong>Error</strong>: The password you entered for the username %s is incorrect.'), '<strong>' . $user_login . '</strong>');
                 $user = get_user_by('login', $user_login);
                 if(!$user and wpcf7_is_email($user_login)){
-                    $message = sprintf(__('<strong>Error</strong>: The password you entered for the email address %s is incorrect.'), '<strong>' . $user_email . '</strong>');
+                    $message = sprintf(__('<strong>Error</strong>: The password you entered for the email address %s is incorrect.'), '<strong>' . $user_login . '</strong>');
                     $user = get_user_by('email', $user_login);
                 }
             } elseif($user_email){
