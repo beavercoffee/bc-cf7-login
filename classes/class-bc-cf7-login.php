@@ -143,7 +143,7 @@ if(!class_exists('BC_CF7_Login')){
             $user_email = $submission->get_posted_data('user_email');
             $user_login = $submission->get_posted_data('user_login');
             $user_password = $submission->get_posted_data('user_password');
-            if(null !== $user_login){
+            if(null === $user_login){
                 $user_login = $user_email;
             }
             $user = wp_signon([
@@ -169,10 +169,14 @@ if(!class_exists('BC_CF7_Login')){
                 return $result;
             }
             if($contact_form->is_true('bc_signup')){
-                return; // signup first
+                return $result; // signup first
             }
             if(!$contact_form->is_true('bc_login')){
-                return;
+                return $result;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
             }
             $user_email = $submission->get_posted_data('user_email');
             if(!email_exists($user_email)){
@@ -195,10 +199,14 @@ if(!class_exists('BC_CF7_Login')){
                 return $result;
             }
             if($contact_form->is_true('bc_signup')){
-                return; // signup first
+                return $result; // signup first
             }
             if(!$contact_form->is_true('bc_login')){
-                return;
+                return $result;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
             }
             $user_email = $submission->get_posted_data('user_email');
             $user_login = $submission->get_posted_data('user_login');
@@ -214,11 +222,12 @@ if(!class_exists('BC_CF7_Login')){
                 $message = sprintf(__('<strong>Error</strong>: The password you entered for the email address %s is incorrect.'), '<strong>' . $user_email . '</strong>');
                 $user = get_user_by('email', $user_email);
             } else {
-                $message = __('<strong>Error</strong>: Invalid username, email address or incorrect password.');
                 $user = false;
             }
             if(!$user){
-                $result->invalidate($tag, wp_strip_all_tags($message));
+                //$message = __('<strong>Error</strong>: Invalid username, email address or incorrect password.');
+                //$message = __('Incorrect username or password.');
+                //$result->invalidate($tag, wp_strip_all_tags($message));
                 return $result;
             }
             if(!wp_check_password($user_password, $user->data->user_pass, $user->ID)){
@@ -239,10 +248,14 @@ if(!class_exists('BC_CF7_Login')){
                 return $result;
             }
             if($contact_form->is_true('bc_signup')){
-                return; // signup first
+                return $result; // signup first
             }
             if(!$contact_form->is_true('bc_login')){
-                return;
+                return $result;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
             }
             $user_login = $submission->get_posted_data('user_login');
             $message = __('Unknown username. Check again or try your email address.');

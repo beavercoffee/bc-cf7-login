@@ -207,7 +207,11 @@ if(!class_exists('BC_CF7_Signup')){
                 return $result;
             }
             if(!$contact_form->is_true('bc_signup')){
-                return;
+                return $result;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
             }
             $user_email = $submission->get_posted_data('user_email');
             if(email_exists($user_email)){
@@ -230,7 +234,11 @@ if(!class_exists('BC_CF7_Signup')){
                 return $result;
             }
             if(!$contact_form->is_true('bc_signup')){
-                return;
+                return $result;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
             }
             $user_password = $submission->get_posted_data('user_password');
             $user_password_confirm = $submission->get_posted_data('user_password_confirm');
@@ -265,8 +273,13 @@ if(!class_exists('BC_CF7_Signup')){
                 return $result;
             }
             if(!$contact_form->is_true('bc_signup')){
-                return;
+                return $result;
             }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $result;
+            }
+            $user_login = $submission->get_posted_data('user_login');
             if(!validate_username($user_login)){
                 $message = __('<strong>Error</strong>: This username is invalid because it uses illegal characters. Please enter a valid username.');
                 $message = $this->first_p($message);
