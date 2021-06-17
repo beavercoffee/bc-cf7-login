@@ -91,7 +91,7 @@ if(!class_exists('BC_CF7_Signup')){
             if(!isset($tags['user_email'])){
                 $missing[] = 'user_email';
             }
-            if(!isset($tags['user_password'])){
+            if(isset($tags['user_password_confirm']) and !isset($tags['user_password'])){
                 $missing[] = 'user_password';
             }
             if($missing){
@@ -135,8 +135,11 @@ if(!class_exists('BC_CF7_Signup')){
             $user_email = $submission->get_posted_data('user_email');
             $user_login = $submission->get_posted_data('user_login');
             $user_password = $submission->get_posted_data('user_password');
-            if(null !== $user_login){
+            if(null === $user_login){
                 $user_login = $user_email;
+            }
+            if(null === $user_password){
+                $user_password = wp_generate_password(12, false);
             }
             $role = $contact_form->pref('bc_signup_role');
             if(null === $role){
@@ -189,8 +192,9 @@ if(!class_exists('BC_CF7_Signup')){
                     ]);
                     if(is_wp_error($user)){
                         $message = $user->get_error_message();
-                        $submission->set_response(wp_strip_all_tags($message));
+                        $submission->set_response('---' . wp_strip_all_tags($message));
                         $submission->set_status('aborted');
+                        return;
                     }
                 }
             }
