@@ -1,7 +1,7 @@
 <?php
 
-if(!class_exists('BC_CF7_Login')){
-    final class BC_CF7_Login {
+if(!class_exists('BC_CF7_Retrieve_Password')){
+    final class BC_CF7_Retrieve_Password {
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
@@ -47,7 +47,6 @@ if(!class_exists('BC_CF7_Login')){
             add_action('wpcf7_mail_sent', [$this, 'wpcf7_mail_sent']);
             add_filter('do_shortcode_tag', [$this, 'do_shortcode_tag'], 10, 4);
             add_filter('wpcf7_validate_email*', [$this, 'wpcf7_validate_email'], 11, 2);
-            add_filter('wpcf7_validate_password*', [$this, 'wpcf7_validate_password'], 11, 2);
             add_filter('wpcf7_validate_text*', [$this, 'wpcf7_validate_text'], 11, 2);
         }
 
@@ -83,10 +82,7 @@ if(!class_exists('BC_CF7_Login')){
             if($contact_form === null){
                 return $output;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $output; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$contact_form->is_true('bc_retrieve_password')){
                 return $output;
             }
             $tags = wp_list_pluck($contact_form->scan_form_tags(), 'type', 'name');
@@ -98,9 +94,6 @@ if(!class_exists('BC_CF7_Login')){
             if(!isset($tags['user_email']) and !isset($tags['user_login'])){
                 $missing[] = 'user_login';
             }
-            if(!isset($tags['user_password'])){
-                $missing[] = 'user_password';
-            }
             if($missing){
                 $error = current_user_can('manage_options') ? sprintf(__('Missing parameter(s): %s'), implode(', ', $missing)) . '.' : __('Something went wrong.');
                 return '<div class="alert alert-danger" role="alert">' . $error . '</div>';
@@ -111,9 +104,6 @@ if(!class_exists('BC_CF7_Login')){
             }
             if(isset($tags['user_login']) and $tags['user_login'] !== 'text*'){
                 $invalid[] = 'user_login';
-            }
-            if(isset($tags['user_password']) and $tags['user_password'] !== 'password*'){
-                $invalid[] = 'user_password';
             }
             if($invalid){
                 $error = current_user_can('manage_options') ? sprintf(__('Invalid parameter(s): %s'), implode(', ', $invalid)) . '.' : __('Something went wrong.');
@@ -130,10 +120,7 @@ if(!class_exists('BC_CF7_Login')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_mail_sent($contact_form){
-            if($contact_form->is_true('bc_signup')){
-                return; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$contact_form->is_true('bc_retrieve_password')){
                 return;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -142,22 +129,15 @@ if(!class_exists('BC_CF7_Login')){
             }
             $user_email = $submission->get_posted_data('user_email');
             $user_login = $submission->get_posted_data('user_login');
-            $user_password = $submission->get_posted_data('user_password');
             if(null === $user_login){
                 $user_login = $user_email;
             }
-            $user = wp_signon([
-                'remember' => $submission->get_posted_data('remember'),
-                'user_login' => $user_login,
-                'user_password' => $user_password,
-            ]);
-            if(is_wp_error($user)){
-                $message = $user->get_error_message();
+            $result = retrieve_password($user_login);
+            if(is_wp_error($result)){
+                $message = $result->get_error_message();
                 $submission->set_response(wp_strip_all_tags($message));
                 $submission->set_status('aborted');
             }
-            $message = __('You have logged in successfully.');
-            $submission->set_response(wp_strip_all_tags($message));
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,10 +150,7 @@ if(!class_exists('BC_CF7_Login')){
             if(null === $contact_form){
                 return $result;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$contact_form->is_true('bc_retrieve_password')){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -192,55 +169,6 @@ if(!class_exists('BC_CF7_Login')){
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function wpcf7_validate_password($result, $tag){
-            if($tag->name !== 'user_password'){
-                return $result;
-            }
-            $contact_form = wpcf7_get_current_contact_form();
-            if($contact_form === null){
-                return $result;
-            }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
-                return $result;
-            }
-            $submission = WPCF7_Submission::get_instance();
-            if(null === $submission){
-                return $result;
-            }
-            $user_email = $submission->get_posted_data('user_email');
-            $user_login = $submission->get_posted_data('user_login');
-            $user_password = $submission->get_posted_data('user_password');
-            if($user_login){
-                $message = sprintf(__('<strong>Error</strong>: The password you entered for the username %s is incorrect.'), '<strong>' . $user_login . '</strong>');
-                $user = get_user_by('login', $user_login);
-                if(!$user and wpcf7_is_email($user_login)){
-                    $message = sprintf(__('<strong>Error</strong>: The password you entered for the email address %s is incorrect.'), '<strong>' . $user_login . '</strong>');
-                    $user = get_user_by('email', $user_login);
-                }
-            } elseif($user_email){
-                $message = sprintf(__('<strong>Error</strong>: The password you entered for the email address %s is incorrect.'), '<strong>' . $user_email . '</strong>');
-                $user = get_user_by('email', $user_email);
-            } else {
-                $user = false;
-            }
-            if(!$user){
-                //$message = __('<strong>Error</strong>: Invalid username, email address or incorrect password.');
-                //$message = __('Incorrect username or password.');
-                //$result->invalidate($tag, wp_strip_all_tags($message));
-                return $result;
-            }
-            if(!wp_check_password($user_password, $user->data->user_pass, $user->ID)){
-                $result->invalidate($tag, wp_strip_all_tags($message));
-                return $result;
-            }
-            return $result;
-        }
-
-    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
         public function wpcf7_validate_text($result, $tag){
             if($tag->name !== 'user_login'){
                 return $result;
@@ -249,10 +177,7 @@ if(!class_exists('BC_CF7_Login')){
             if($contact_form === null){
                 return $result;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$contact_form->is_true('bc_retrieve_password')){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();

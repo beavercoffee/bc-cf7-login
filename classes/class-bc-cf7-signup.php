@@ -138,7 +138,9 @@ if(!class_exists('BC_CF7_Signup')){
             if(null === $user_login){
                 $user_login = $user_email;
             }
+            $generated_password = false;
             if(null === $user_password){
+                $generated_password = true;
                 $user_password = wp_generate_password(12, false);
             }
             $role = $contact_form->pref('bc_signup_role');
@@ -183,6 +185,18 @@ if(!class_exists('BC_CF7_Signup')){
     				}
                 }
             }
+            if(!$contact_form->is_true('skip_mail')){
+                if($generated_password){
+                    wp_new_user_notification($user_id, null, 'both');
+                } else {
+                    wp_new_user_notification($user_id, null, 'admin');
+                }
+            }
+            $message = sprintf(__('Registration complete. Please check your email, then visit the <a href="%s">login page</a>.'), wp_login_url());
+            if(!$generated_password){
+                $message = $this->first_p($message);
+            }
+            $submission->set_response(wp_strip_all_tags($message));
             if($contact_form->is_true('bc_login')){
                 if(!is_user_logged_in()){
                     $user = wp_signon([
@@ -192,10 +206,12 @@ if(!class_exists('BC_CF7_Signup')){
                     ]);
                     if(is_wp_error($user)){
                         $message = $user->get_error_message();
-                        $submission->set_response('---' . wp_strip_all_tags($message));
+                        $submission->set_response(wp_strip_all_tags($message));
                         $submission->set_status('aborted');
                         return;
                     }
+                    $message = __('You have logged in successfully.');
+                    $submission->set_response(wp_strip_all_tags($message));
                 }
             }
         }
