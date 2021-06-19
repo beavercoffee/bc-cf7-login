@@ -69,6 +69,22 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    	private function is_type($contact_form = null){
+            if($contact_form === null){
+                return false;
+            }
+            $type = $contact_form->pref('bc_type');
+            if(null === $type){
+                return false;
+            }
+            if($type !== 'retrieve_password'){
+                return false;
+            }
+            return true;
+        }
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
     	// public
     	//
@@ -82,7 +98,7 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
             if($contact_form === null){
                 return $output;
             }
-            if(!$contact_form->is_true('bc_retrieve_password')){
+            if(!$this->is_type($contact_form)){
                 return $output;
             }
             $tags = wp_list_pluck($contact_form->scan_form_tags(), 'type', 'name');
@@ -120,7 +136,7 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_mail_sent($contact_form){
-            if(!$contact_form->is_true('bc_retrieve_password')){
+            if(!$this->is_type($contact_form)){
                 return;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -150,7 +166,7 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
             if(null === $contact_form){
                 return $result;
             }
-            if(!$contact_form->is_true('bc_retrieve_password')){
+            if(!$this->is_type($contact_form)){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -177,7 +193,7 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
             if($contact_form === null){
                 return $result;
             }
-            if(!$contact_form->is_true('bc_retrieve_password')){
+            if(!$this->is_type($contact_form)){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();

@@ -70,6 +70,22 @@ if(!class_exists('BC_CF7_Login')){
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    	private function is_type($contact_form = null){
+            if($contact_form === null){
+                return false;
+            }
+            $type = $contact_form->pref('bc_type');
+            if(null === $type){
+                return false;
+            }
+            if($type !== 'login'){
+                return false;
+            }
+            return true;
+        }
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
     	// public
     	//
@@ -83,10 +99,7 @@ if(!class_exists('BC_CF7_Login')){
             if($contact_form === null){
                 return $output;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $output; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$this->is_type($contact_form)){
                 return $output;
             }
             $tags = wp_list_pluck($contact_form->scan_form_tags(), 'type', 'name');
@@ -130,10 +143,7 @@ if(!class_exists('BC_CF7_Login')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_mail_sent($contact_form){
-            if($contact_form->is_true('bc_signup')){
-                return; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$this->is_type($contact_form)){
                 return;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -170,10 +180,7 @@ if(!class_exists('BC_CF7_Login')){
             if(null === $contact_form){
                 return $result;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$this->is_type($contact_form)){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -200,10 +207,7 @@ if(!class_exists('BC_CF7_Login')){
             if($contact_form === null){
                 return $result;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$this->is_type($contact_form)){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();
@@ -249,10 +253,7 @@ if(!class_exists('BC_CF7_Login')){
             if($contact_form === null){
                 return $result;
             }
-            if($contact_form->is_true('bc_signup')){
-                return $result; // signup first
-            }
-            if(!$contact_form->is_true('bc_login')){
+            if(!$this->is_type($contact_form)){
                 return $result;
             }
             $submission = WPCF7_Submission::get_instance();

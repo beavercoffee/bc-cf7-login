@@ -49,6 +49,22 @@ if(!class_exists('BC_CF7_Logout')){
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    	private function is_type($contact_form = null){
+            if($contact_form === null){
+                return false;
+            }
+            $type = $contact_form->pref('bc_type');
+            if(null === $type){
+                return false;
+            }
+            if($type !== 'logout'){
+                return false;
+            }
+            return true;
+        }
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
     	// public
     	//
@@ -62,7 +78,7 @@ if(!class_exists('BC_CF7_Logout')){
             if($contact_form === null){
                 return $output;
             }
-            if(!$contact_form->is_true('bc_logout')){
+            if(!$this->is_type($contact_form)){
                 return $output;
             }
             if(!is_user_logged_in()){
@@ -75,7 +91,7 @@ if(!class_exists('BC_CF7_Logout')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_mail_sent($contact_form){
-            if(!$contact_form->is_true('bc_logout')){
+            if(!$this->is_type($contact_form)){
                 return;
             }
             wp_logout();
