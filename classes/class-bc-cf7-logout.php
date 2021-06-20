@@ -94,6 +94,10 @@ if(!class_exists('BC_CF7_Logout')){
             if(!$this->is_type($contact_form)){
                 return;
             }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return;
+            }
             wp_logout();
             $message = __('You are now logged out.');
             $submission->set_response(wp_strip_all_tags($message));
