@@ -128,7 +128,7 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
             if(is_user_logged_in()){
                 $error = __('You are logged in already. No need to register again!');
                 $error = $this->first_p($error);
-                return '<div class="alert alert-success" role="alert">' . $error . '</div>';
+                return '<div class="alert alert-warning" role="alert">' . $error . '</div>';
             }
             return $output;
         }
@@ -154,6 +154,8 @@ if(!class_exists('BC_CF7_Retrieve_Password')){
                 $submission->set_response(wp_strip_all_tags($message));
                 $submission->set_status('aborted');
             }
+            $message = sprintf(__('Check your email for the confirmation link, then visit the <a href="%s">login page</a>.'), wp_login_url());
+            $submission->set_response(wp_strip_all_tags($message));
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
