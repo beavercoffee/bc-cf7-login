@@ -83,7 +83,7 @@ if(!class_exists('BC_CF7_Logout')){
             }
             if(!is_user_logged_in()){
                 $error = __('You are not currently logged in.');
-                return '<div class="alert alert-danger" role="alert">' . $error . '</div>';
+                return '<div class="alert alert-warning" role="alert">' . $error . '</div>';
             }
             return $output;
         }
