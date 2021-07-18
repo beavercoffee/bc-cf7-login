@@ -196,7 +196,7 @@ if(!class_exists('BC_CF7_Login')){
             if('user_email' !== $tag->name){
                 return $result;
             }
-            if(!$this->is_type($contact_form)){
+            if(!$this->is_type()){
                 return $result;
             }
             $user_email = bc_cf7()->get_posted_data('user_email');
@@ -215,7 +215,7 @@ if(!class_exists('BC_CF7_Login')){
             if($tag->name !== 'user_password'){
                 return $result;
             }
-            if(!$this->is_type($contact_form)){
+            if(!$this->is_type()){
                 return $result;
             }
             $user_email = bc_cf7()->get_posted_data('user_email');
@@ -250,7 +250,7 @@ if(!class_exists('BC_CF7_Login')){
             if($tag->name !== 'user_login'){
                 return $result;
             }
-            if(!$this->is_type($contact_form)){
+            if(!$this->is_type()){
                 return $result;
             }
             $user_login = bc_cf7()->get_posted_data('user_login');
