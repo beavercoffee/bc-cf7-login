@@ -69,9 +69,6 @@ if(!class_exists('BC_CF7_Login')){
             add_filter('wpcf7_validate_email*', [$this, 'wpcf7_validate_email'], 11, 2);
             add_filter('wpcf7_validate_password*', [$this, 'wpcf7_validate_password'], 11, 2);
             add_filter('wpcf7_validate_text*', [$this, 'wpcf7_validate_text'], 11, 2);
-            if(!has_filter('wpcf7_verify_nonce', 'is_user_logged_in')){
-                add_filter('wpcf7_verify_nonce', 'is_user_logged_in');
-            }
             bc_build_update_checker('https://github.com/beavercoffee/bc-cf7-login', $this->file, 'bc-cf7-login');
             $this->fields = ['user_email', 'user_login', 'user_password', 'user_remember'];
             do_action('bc_cf7_login_loaded');
